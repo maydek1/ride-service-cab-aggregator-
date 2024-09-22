@@ -10,7 +10,7 @@ import java.util.Set;
 @Repository
 public interface RideRepository extends JpaRepository<Ride, Long> {
     Set<Ride> findAllByStatus(RideStatus status);
-    Set<Ride> findAllByDriverId(Long driver_id);
-    Set<Ride> findAllByPassengerId(Long passenger_id);
+    Set<Ride> findAllByDriverId(Long driverId);
+    Set<Ride> findAllByPassengerId(Long passengerId);
 
 }

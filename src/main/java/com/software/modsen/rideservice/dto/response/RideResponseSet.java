@@ -12,5 +12,5 @@ import java.util.Set;
 @Getter
 @Setter
 public class RideResponseSet {
-    Set<RideResponse> rideResponseSet;
+    Set<RideResponse> rides;
 }

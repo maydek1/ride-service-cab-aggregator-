@@ -19,8 +19,8 @@ public class Ride{
     private Long id;
     private Long driverId;
     private Long passengerId;
-    private String pickup_address;
-    private String destination_address;
+    private String pickupAddress;
+    private String destinationAddress;
     private BigDecimal price;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
