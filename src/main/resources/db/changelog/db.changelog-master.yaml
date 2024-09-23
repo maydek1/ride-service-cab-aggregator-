@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: maydek
+      changes:
+        - createTable:
+            tableName: rides
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: driver_id
+                  type: BIGINT
+              - column:
+                  name: passenger_id
+                  type: BIGINT
+              - column:
+                  name: pickup_address
+                  type: VARCHAR(255)
+              - column:
+                  name: destination_address
+                  type: VARCHAR(255)
+              - column:
+                  name: price
+                  type: DECIMAL(19, 4)
+              - column:
+                  name: start_date
+                  type: TIMESTAMP
+              - column:
+                  name: end_date
+                  type: TIMESTAMP
+              - column:
+                  name: status
+                  type: VARCHAR(20)
