@@ -12,3 +12,8 @@ spring:
     name: RideService
 server:
   port: 4568
+
+driver-service:
+  name: driver-service
+  url: http://localhost:4567/drivers
+

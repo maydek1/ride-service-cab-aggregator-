@@ -1,11 +1,7 @@
 package com.software.modsen.rideservice.dto.response;
 
 import com.software.modsen.rideservice.model.RideStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,13 +10,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@ToString
 @Setter
 public class RideResponse {
     private Long id;
     private Long driverId;
     private Long passengerId;
-    private String pickup_address;
-    private String destination_address;
+    private String pickupAddress;
+    private String destinationAddress;
     private BigDecimal price;
     private LocalDateTime startDate;
     private LocalDateTime endDate;

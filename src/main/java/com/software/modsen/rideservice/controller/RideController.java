@@ -1,10 +1,11 @@
 package com.software.modsen.rideservice.controller;
 
-import com.software.modsen.rideservice.dto.request.RideRequest;
+import com.software.modsen.rideservice.dto.request.*;
 import com.software.modsen.rideservice.dto.response.RideResponse;
 import com.software.modsen.rideservice.dto.response.RideResponseSet;
 import com.software.modsen.rideservice.mapper.RideMapper;
 import com.software.modsen.rideservice.model.RideStatus;
+import com.software.modsen.rideservice.service.DriverService;
 import com.software.modsen.rideservice.service.RideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,11 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/ride")
+@RequestMapping("/api/v1/ride")
 @RequiredArgsConstructor
 public class RideController {
 
     private final RideService rideService;
+    private final DriverService driverService;
     private final RideMapper rideMapper;
 
     @PostMapping
@@ -80,9 +82,46 @@ public class RideController {
         return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<RideResponse> changeRideStatus(@PathVariable Long id, @RequestBody RideStatus rideStatus) {
-        RideResponse ride = rideMapper.rideToRideResponse(rideService.changeStatus(id, rideStatus));
+    @PutMapping("/status")
+    public ResponseEntity<RideResponse> changeRideStatus(@RequestBody RideStatusRequest rideStatus) {
+        RideResponse ride = rideMapper.rideToRideResponse(rideService.changeStatus(rideStatus));
         return new ResponseEntity<>(ride, HttpStatus.OK);
+    }
+
+    @PutMapping("/driver")
+    public ResponseEntity<RideResponse> setDriver(@RequestBody RideDriverRequest request){
+        RideResponse rideResponse = rideMapper.rideToRideResponse(rideService.setDriver(request));
+        return ResponseEntity.ok(rideResponse);
+    }
+
+    @GetMapping("/created/{id}")
+    public ResponseEntity<RideResponseSet> getRideToConfirm(@PathVariable Long id){
+        return ResponseEntity.ok(new RideResponseSet(rideService.getRidesToConfirm(id)
+                .stream()
+                .map(rideMapper::rideToRideResponse)
+                .collect(Collectors.toSet())));
+    }
+
+    @PostMapping("/accept/{id}")
+    public ResponseEntity<RideResponse> acceptRide(@PathVariable Long id){
+        RideResponse rideResponse = rideMapper.rideToRideResponse(rideService.acceptRide(id));
+        return ResponseEntity.ok(rideResponse);
+    }
+
+    @PostMapping("/reject/{id}")
+    public ResponseEntity<RideResponse> rejectRide(@PathVariable Long id){
+        RideResponse rideResponse = rideMapper.rideToRideResponse(rideService.rejectRide(id));
+        return ResponseEntity.ok(rideResponse);
+    }
+
+    @PostMapping("/completed/{id}")
+    public ResponseEntity<RideResponse> completedRide(@PathVariable Long id){
+        RideResponse rideResponse = rideMapper.rideToRideResponse(rideService.completedRide(id));
+        return ResponseEntity.ok(rideResponse);
+    }
+
+    @PostMapping("/driver")
+    ResponseEntity<DriverResponse> updateRating(@RequestBody DriverRatingRequest driverRatingRequest){
+        return driverService.updateRating(driverRatingRequest);
     }
 }
