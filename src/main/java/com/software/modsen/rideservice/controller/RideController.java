@@ -25,7 +25,8 @@ public class RideController {
 
     @PostMapping
     public ResponseEntity<RideResponse> createRide(@RequestBody RideRequest rideRequest) {
-        RideResponse createdRide = rideMapper.rideToRideResponse(rideService.createRide(rideRequest));
+        RideResponse createdRide = rideMapper.rideToRideResponse(rideService.createRide(
+                rideMapper.rideRequestToRide(rideRequest)));
         return new ResponseEntity<>(createdRide, HttpStatus.CREATED);
     }
 
@@ -37,7 +38,8 @@ public class RideController {
 
     @PutMapping("/{id}")
     public ResponseEntity<RideResponse> updateRide(@PathVariable Long id, @RequestBody RideRequest rideRequest) {
-        RideResponse updatedRide = rideMapper.rideToRideResponse(rideService.updateRide(id, rideRequest));
+        RideResponse updatedRide = rideMapper.rideToRideResponse(rideService.updateRide(id
+                ,rideMapper.rideRequestToRide(rideRequest)));
         return new ResponseEntity<>(updatedRide, HttpStatus.OK);
     }
 
@@ -113,5 +115,11 @@ public class RideController {
     @PostMapping("/driver")
     ResponseEntity<DriverResponse> updateRating(@RequestBody DriverRatingRequest driverRatingRequest){
         return driverService.updateRating(driverRatingRequest);
+    }
+
+    @PostMapping("/ride")
+    public ResponseEntity<RideResponse> startRide(@RequestBody RideRequest rideRequest){
+        return ResponseEntity.ok().body(rideMapper.rideToRideResponse(rideService.startRide(
+               rideMapper.rideRequestToRide(rideRequest))));
     }
 }

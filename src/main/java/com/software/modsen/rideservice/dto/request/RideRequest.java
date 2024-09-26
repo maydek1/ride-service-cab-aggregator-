@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Setter
 @ToString
 public class RideRequest {
+    private Long rideId;
     private Long driverId;
     private Long passengerId;
     private String pickupAddress;
