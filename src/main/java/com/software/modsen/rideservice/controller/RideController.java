@@ -102,21 +102,11 @@ public class RideController {
                 .collect(Collectors.toSet())));
     }
 
-    @PostMapping("/accept/{id}")
-    public ResponseEntity<RideResponse> acceptRide(@PathVariable Long id){
-        RideResponse rideResponse = rideMapper.rideToRideResponse(rideService.acceptRide(id));
-        return ResponseEntity.ok(rideResponse);
-    }
+    @PostMapping("/update-status")
+    public ResponseEntity<RideResponse> updateRideStatus(
+            @RequestBody RideStatusRequest statusRequest) {
 
-    @PostMapping("/reject/{id}")
-    public ResponseEntity<RideResponse> rejectRide(@PathVariable Long id){
-        RideResponse rideResponse = rideMapper.rideToRideResponse(rideService.rejectRide(id));
-        return ResponseEntity.ok(rideResponse);
-    }
-
-    @PostMapping("/completed/{id}")
-    public ResponseEntity<RideResponse> completedRide(@PathVariable Long id){
-        RideResponse rideResponse = rideMapper.rideToRideResponse(rideService.completedRide(id));
+        RideResponse rideResponse = rideMapper.rideToRideResponse(rideService.updateRideStatus(statusRequest));
         return ResponseEntity.ok(rideResponse);
     }
 

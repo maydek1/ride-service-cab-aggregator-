@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.software.modsen.rideservice.model.RideStatus.*;
+import static com.software.modsen.rideservice.util.ExceptionMessages.INVALID_STATUS_REQUEST;
 import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_FOUND;
 
 @Service
@@ -69,7 +71,7 @@ public class RideService {
     public Ride changeStatus(RideStatusRequest rideStatusRequest){
         Ride ride = rideRepository.findById(rideStatusRequest.getRideId())
                 .orElseThrow(() -> new RideNotFoundException(String.format(RIDE_NOT_FOUND, rideStatusRequest.getRideId())));
-        ride.setStatus(RideStatus.valueOf(rideStatusRequest.getStatus()));
+        ride.setStatus(rideStatusRequest.getStatus());
         return rideRepository.save(ride);
     }
 
@@ -89,27 +91,26 @@ public class RideService {
         return rideRepository.findAllByStatusAndDriverId(RideStatus.CREATED, driverId);
     }
 
-    public Ride acceptRide(Long id) {
-        Ride ride = findByStatusAndId(RideStatus.CREATED, id);
+    public Ride updateRideStatus(RideStatusRequest request) {
+        Ride ride;
 
-        ride.setStartDate(LocalDateTime.now());
-        ride.setStatus(RideStatus.ACCEPTED);
-
-        return rideRepository.save(ride);
-    }
-
-    public Ride rejectRide(Long id) {
-        Ride ride = findByStatusAndId(RideStatus.CREATED, id);
-        ride.setStatus(RideStatus.CANCELED);
-
-        return rideRepository.save(ride);
-    }
-
-    public Ride completedRide(Long id) {
-        Ride ride = findByStatusAndId(RideStatus.ACCEPTED, id);
-
-        ride.setEndDate(LocalDateTime.now());
-        ride.setStatus(RideStatus.COMPLETED);
+        switch (request.getStatus()) {
+            case ACCEPTED -> {
+                ride = findByStatusAndId(RideStatus.CREATED, request.getRideId());
+                ride.setStartDate(LocalDateTime.now());
+                ride.setStatus(ACCEPTED);
+            }
+            case CANCELED -> {
+                ride = findByStatusAndId(RideStatus.CREATED, request.getRideId());
+                ride.setStatus(CANCELED);
+            }
+            case COMPLETED -> {
+                ride = findByStatusAndId(ACCEPTED, request.getRideId());
+                ride.setEndDate(LocalDateTime.now());
+                ride.setStatus(COMPLETED);
+            }
+            default -> throw new IllegalArgumentException(String.format(INVALID_STATUS_REQUEST, request.getStatus()));
+        }
 
         return rideRepository.save(ride);
     }
