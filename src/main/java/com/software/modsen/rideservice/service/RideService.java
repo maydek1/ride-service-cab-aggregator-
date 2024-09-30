@@ -11,6 +11,7 @@ import com.software.modsen.rideservice.exception.RideNotFoundException;
 import com.software.modsen.rideservice.model.Ride;
 import com.software.modsen.rideservice.model.RideStatus;
 import com.software.modsen.rideservice.repositories.RideRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,10 +42,10 @@ public class RideService {
     }
 
     public Ride updateRide(Long id, Ride ride) {
-        Ride ride_exist = rideRepository.findById(id)
+        Ride existingRide = rideRepository.findById(id)
                         .orElseThrow(() -> new RideNotFoundException(String.format(RIDE_NOT_FOUND, id)));
 
-        ride.setId(ride_exist.getId());
+        ride.setId(existingRide.getId());
         return rideRepository.save(ride);
     }
 
@@ -125,12 +126,13 @@ public class RideService {
                 .orElseThrow(() -> new RideNotFoundException(RIDE_NOT_FOUND));
     }
 
+    @Transactional
     public Ride startRide(Ride ride) {
         ride.setStatus(CREATED);
         ride = rideRepository.save(ride);
         PassengerResponse passengerResponse = passengerClient.getPassengerById(ride.getPassengerId()).getBody();
         if (passengerResponse == null) throw new PassengerNotFoundException(String.format(PASSENGER_NOT_FOUND, ride.getPassengerId()));
-        if (passengerResponse.getMoney().compareTo(ride.getPrice()) > 0) throw new NotEnoughMoneyException(NOT_ENOUGH_MONEY);
+        if (passengerResponse.getMoney().compareTo(ride.getPrice()) < 0) throw new NotEnoughMoneyException(NOT_ENOUGH_MONEY);
         Long driverId = driverService.findAvailableDriver();
         return setDriver(new RideDriverRequest(driverId, ride.getId()));
     }
