@@ -1,9 +1,6 @@
 package com.software.modsen.rideservice.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -11,9 +8,12 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class RideRequest {
+    private Long rideId;
     private Long driverId;
     private Long passengerId;
-    private String pickup_address;
+    private String pickupAddress;
+    private String destinationAddress;
     private BigDecimal price;
 }
