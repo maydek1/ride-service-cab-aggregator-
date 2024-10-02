@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/rideDB
+    url: jdbc:postgresql://my_postgres:5432/ridedb
     username: postgres
     password: 123
   jpa:
@@ -10,10 +10,30 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
   application:
     name: RideService
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: user
+    password: password
 server:
   port: 4568
 
 driver-service:
-  name: driver-service
-  url: http://localhost:4567/drivers
+  name: DriverService
+  path: /api/v1/drivers
+passenger-service:
+  name: PassengerService
+  path: /api/v1/passenger
 
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka/
+  instance:
+    preferIpAddress: true
+
+rabbitmq:
+  queues:
+    request: request.queue
+    response: response.queue
