@@ -37,3 +37,14 @@ rabbitmq:
   queues:
     request: request.queue
     response: response.queue
+
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      rideService:
+        sliding-window-size: 20
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 75
+        wait-duration-in-open-state: 10000
+        permitted-number-of-calls-in-half-open-state: 3
