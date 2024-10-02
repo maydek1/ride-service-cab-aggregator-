@@ -29,7 +29,6 @@ public class DriverService {
     private final DriverClient driverClient;
     private final RideRepository rideRepository;
 
-
     private static final int TIMEOUT_TIME = 10000;
     private static final int MAX_RETRIES = 5;
 
