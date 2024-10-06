@@ -2,6 +2,7 @@ package com.software.modsen.rideservice.service;
 
 import com.software.modsen.rideservice.client.DriverClient;
 import com.software.modsen.rideservice.client.PassengerClient;
+import com.software.modsen.rideservice.dto.request.ChargeMoneyRequest;
 import com.software.modsen.rideservice.dto.request.RideDriverRequest;
 import com.software.modsen.rideservice.dto.request.RideStatusRequest;
 import com.software.modsen.rideservice.dto.response.PassengerResponse;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -113,6 +115,7 @@ public class RideService {
                 ride = findByStatusAndId(ACCEPTED, request.getRideId());
                 ride.setEndDate(LocalDateTime.now());
                 ride.setStatus(COMPLETED);
+                passengerClient.chargeMoney(new ChargeMoneyRequest(ride.getPrice().multiply(BigDecimal.valueOf(-1)), ride.getPassengerId()));
                 driverClient.toggleAvailable(ride.getDriverId(), true);
             }
             default -> throw new IllegalArgumentException(String.format(INVALID_STATUS_REQUEST, request.getStatus()));

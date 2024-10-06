@@ -11,4 +11,6 @@ public class ExceptionMessages {
     public static final String AVAILABLE_DRIVER_NOT_FOUND = "Нет доступных водителей после нескольких попыток";
     public static final String INVALID_STATUS_REQUEST = "Invalid status: '%s'";
     public static final String NOT_ENOUGH_MONEY = "Not enough money";
+    public static final String SERVICE_UNAVAILABLE = "'%s' service unavailable";
+    public static final String CIRCUIT_BREAKER_IS_OPEN = "Circuit breaker is open for %s service";
 }

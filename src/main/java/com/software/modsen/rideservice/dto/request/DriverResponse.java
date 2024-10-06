@@ -14,7 +14,7 @@ public class DriverResponse {
     private String phone;
     private String email;
     private String sex;
-    private Long car_id;
+    private Long carId;
     private int rate;
     private int ratingCount;
 }

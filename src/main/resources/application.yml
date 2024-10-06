@@ -48,3 +48,9 @@ resilience4j:
         failure-rate-threshold: 75
         wait-duration-in-open-state: 10000
         permitted-number-of-calls-in-half-open-state: 3
+      passengerService:
+        sliding-window-size: 20
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 75
+        wait-duration-in-open-state: 10000
+        permitted-number-of-calls-in-half-open-state: 3
