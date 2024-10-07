@@ -19,7 +19,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.software.modsen.rideservice.util.ExceptionMessages.AVAILABLE_DRIVER_NOT_FOUND;
 import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_FOUND;
@@ -83,7 +82,7 @@ class DriverServiceTest {
     @Test
     void findAvailableDriver_ShouldReturnDriverId_WhenDriverIsAvailable() {
         Message responseMessage = new Message("1".getBytes());
-        when(responseQueue.getName()).thenReturn("queue");
+        when(responseQueue.getName()).thenReturn("responseQueueName");
 
         when(rabbitTemplate.receive(anyString(), anyLong())).thenReturn(responseMessage);
 
@@ -95,9 +94,11 @@ class DriverServiceTest {
     @Test
     void findAvailableDriver_ShouldThrowDriverNotFoundException_WhenNoDriverIsAvailable() {
         when(rabbitTemplate.receive(anyString(), anyLong())).thenReturn(null);
-        when(responseQueue.getName()).thenReturn("queue");
+
+        when(responseQueue.getName()).thenReturn("responseQueueName");
 
         DriverNotFoundException exception = assertThrows(DriverNotFoundException.class, () -> driverService.findAvailableDriver());
+
         assertEquals(AVAILABLE_DRIVER_NOT_FOUND, exception.getMessage());
     }
 }

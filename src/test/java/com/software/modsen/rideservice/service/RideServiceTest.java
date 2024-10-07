@@ -9,6 +9,7 @@ import com.software.modsen.rideservice.exception.NotEnoughMoneyException;
 import com.software.modsen.rideservice.exception.PassengerNotFoundException;
 import com.software.modsen.rideservice.exception.RideNotFoundException;
 import com.software.modsen.rideservice.model.Ride;
+import com.software.modsen.rideservice.model.RideStatus;
 import com.software.modsen.rideservice.repositories.RideRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -120,7 +122,7 @@ class RideServiceTest {
     }
 
     @Test
-    void updateRideStatus_ShouldHandleCompletedStatus() {
+    void updateRideStatusToCompleted_ShouldHandleCompletedStatus() {
         RideStatusRequest request = new RideStatusRequest(COMPLETED, 1L);
         when(rideRepository.findByStatusAndId(ACCEPTED, 1L)).thenReturn(Optional.of(ride));
         when(passengerClient.chargeMoney(any(ChargeMoneyRequest.class))).thenReturn(ResponseEntity.ok().build());
@@ -128,6 +130,35 @@ class RideServiceTest {
 
         Ride updatedRide = rideService.updateRideStatus(request);
         assertEquals(COMPLETED, updatedRide.getStatus());
+    }
+
+    @Test
+    void updateRideStatusToAccepted_ShouldHandleCompletedStatus() {
+        RideStatusRequest request = new RideStatusRequest(ACCEPTED, 1L);
+        when(rideRepository.findByStatusAndId(CREATED, 1L)).thenReturn(Optional.of(ride));
+        when(passengerClient.chargeMoney(any(ChargeMoneyRequest.class))).thenReturn(ResponseEntity.ok().build());
+        when(rideRepository.save(ride)).thenReturn(ride);
+
+        Ride updatedRide = rideService.updateRideStatus(request);
+        assertEquals(ACCEPTED, updatedRide.getStatus());
+    }
+
+    @Test
+    void updateRideStatus_ShouldThrowException_WhenStatusNotExist() {
+        RideStatusRequest request = new RideStatusRequest(CREATED, 1L);
+
+        assertThrows(IllegalArgumentException.class, () -> rideService.updateRideStatus(request));
+    }
+
+    @Test
+    void updateRideStatusToCanceled_ShouldHandleCompletedStatus() {
+        RideStatusRequest request = new RideStatusRequest(CANCELED, 1L);
+        when(rideRepository.findByStatusAndId(CREATED, 1L)).thenReturn(Optional.of(ride));
+        when(passengerClient.chargeMoney(any(ChargeMoneyRequest.class))).thenReturn(ResponseEntity.ok().build());
+        when(rideRepository.save(ride)).thenReturn(ride);
+
+        Ride updatedRide = rideService.updateRideStatus(request);
+        assertEquals(CANCELED, updatedRide.getStatus());
     }
 
     @Test
@@ -158,5 +189,17 @@ class RideServiceTest {
         when(rideRepository.save(ride)).thenReturn(ride);
         when(passengerClient.getPassengerById(any())).thenReturn(ResponseEntity.ok(null));
         assertThrows(PassengerNotFoundException.class, () -> rideService.startRide(ride));
+    }
+
+    @Test
+    void getRidesToConfirm_ShouldReturnSetOfRides(){
+        Long driverId = 2L;
+
+        when(rideRepository.findAllByStatusAndDriverId(RideStatus.CREATED, driverId)).thenReturn(Set.of(ride));
+        Set<Ride> rides = rideService.getRidesToConfirm(2L);
+        Iterator<Ride> iterator = rides.iterator();
+        Ride ride1 = iterator.next();
+        assertEquals(rides.size(), 1);
+        assertEquals(ride1.getDriverId(), 2);
     }
 }
